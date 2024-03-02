@@ -1,0 +1,21 @@
+{
+    "KPlugin": {
+        "Authors": [
+            {
+                "Email": "heiko@rangun.de",
+                "Name": "Heiko Schäfer"
+            }
+        ],
+        "Category": "Multimedia",
+        "Description": "A widget to take over the world!",
+        "Icon": "media-playback-start",
+        "Id": "de.rangun.minibar",
+        "Name": "MiniBar",
+        "Version": "1"
+    },
+    "KPackageStructure": "Plasma/Applet",
+    "X-Plasma-API-Minimum-Version": "6.0",
+    "X-Plasma-Provides": [
+        "org.kde.plasma.multimediacontrols"
+    ]
+}
