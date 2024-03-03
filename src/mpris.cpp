@@ -19,6 +19,9 @@
 
 #include <QDBusMessage>
 
+#include <KLocalizedString>
+#include <KGlobalAccel>
+
 #include "mpris.h"
 
 const QString Mpris::service = "org.mpris.MediaPlayer2.vlc";
@@ -31,6 +34,19 @@ Mpris::Mpris(QObject *parent) : QObject(parent), con(QDBusConnection::sessionBus
     if(!con.connect(service, path, iface_properties, "PropertiesChanged", this, SLOT(playbackStatusChanged(const QString&)))) {
         qWarning() << "Couldn't connect to " << iface_properties << ".PropertiesChanged";
     }
+
+    m_collection = new KActionCollection(this, QStringLiteral("MiniBar"));
+    m_collection->setComponentDisplayName(QStringLiteral("MiniBar"));
+
+    m_playpause = m_collection->addAction(QStringLiteral("play"), this, SLOT(playpause()));
+    m_playpause->setIcon(QIcon::fromTheme(QStringLiteral("media-playback-start")));
+    m_playpause->setText(i18n("Play/Pause"));
+    KGlobalAccel::setGlobalShortcut(m_playpause, Qt::Key_MediaPlay);
+
+    m_stop = m_collection->addAction(QStringLiteral("stop"), this, SLOT(stop()));
+    m_stop->setIcon(QIcon::fromTheme(QStringLiteral("media-playback-stop")));
+    m_stop->setText(i18n("Stop"));
+    KGlobalAccel::setGlobalShortcut(m_stop, Qt::Key_MediaStop);
 }
 
 QString Mpris::getPlaybackStatus() const {
@@ -47,6 +63,15 @@ QString Mpris::getPlaybackStatus() const {
     } else {
         qWarning() << "Error getting MPRIS Identity:" << reply.error().message();
         return "VLC not running";
+    }
+}
+
+void Mpris::playpause() const {
+
+    if(getPlaybackStatus() == "Playing") {
+        pause();
+    } else {
+        play();
     }
 }
 
@@ -72,6 +97,5 @@ QDBusReply<QVariant> Mpris::call(const QString& iface, const QString& method, co
 }
 
 void Mpris::onPropertiesChanged(const QString& s) {
-    qDebug() << "emitting onPropertiesChanged: " << s;
     emit playbackStatusChanged(s);
 }

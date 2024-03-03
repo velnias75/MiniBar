@@ -15,6 +15,8 @@ find_package(Plasma ${KF5_MIN_VERSION} REQUIRED COMPONENTS)
 
 find_package(KF6 ${KF5_MIN_VERSION} REQUIRED COMPONENTS
     I18n
+    GlobalAccel
+    XmlGui
 )
 
 find_package(Qt6 REQUIRED COMPONENTS

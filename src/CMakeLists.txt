@@ -6,6 +6,8 @@ set(minibarplugin_SRCS
 add_library(minibarplugin SHARED ${minibarplugin_SRCS})
 
 target_link_libraries(minibarplugin
+    KF6::XmlGui
+    KF6::GlobalAccel
     KF6::I18n
     Qt6::Qml
     Qt6::DBus)

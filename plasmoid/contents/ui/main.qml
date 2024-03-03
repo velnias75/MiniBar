@@ -53,11 +53,7 @@ PlasmoidItem {
             Layout.fillWidth: true
 
             onClicked: {
-                if(mpris.playbackStatus == "Playing") {
-                    mpris.pause();
-                } else {
-                    mpris.play();
-                }
+                mpris.playpause();
             }
         }
 

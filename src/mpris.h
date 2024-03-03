@@ -23,6 +23,8 @@
 #include <QDBusConnection>
 #include <QDBusReply>
 
+#include <KActionCollection>
+
 class Mpris : public QObject {
     Q_OBJECT
     Q_PROPERTY(QString playbackStatus READ getPlaybackStatus NOTIFY playbackStatusChanged)
@@ -30,12 +32,11 @@ class Mpris : public QObject {
 public:
     explicit Mpris(QObject *parent = 0);
 
-    Q_INVOKABLE void play() const;
-    Q_INVOKABLE void pause() const;
-    Q_INVOKABLE void stop() const;
-
 public slots:
     QString getPlaybackStatus() const;
+
+    Q_INVOKABLE void playpause() const;
+    Q_INVOKABLE void stop() const;
 
 private slots:
     void onPropertiesChanged(const QString &p);
@@ -46,6 +47,9 @@ signals:
 private:
      QDBusReply<QVariant> call(const QString& iface, const QString& method, const QList<QVariant>& args = QList<QVariant>()) const;
 
+     void play() const;
+     void pause() const;
+
 private:
     QDBusConnection con;
 
@@ -54,6 +58,10 @@ private:
     static const QString iface_properties;
     static const QString iface_player;
 
+    KActionCollection *m_collection { nullptr };
+
+    QAction *m_playpause;
+    QAction *m_stop;
 };
 
 #endif // MPRIS_H_INCLUDED

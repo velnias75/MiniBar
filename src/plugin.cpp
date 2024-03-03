@@ -17,6 +17,8 @@
 *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
+#include <QQmlEngine>
+
 #include "plugin.h"
 #include "mpris.h"
 
@@ -26,3 +28,4 @@ void Plugin::registerTypes(const char *uri) {
 
     qmlRegisterType<Mpris>(uri, 1, 0, "Mpris");
 }
+
