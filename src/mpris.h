@@ -22,8 +22,11 @@
 
 #include <QDBusConnection>
 #include <QDBusReply>
+#include <QProcess>
 
 #include <KActionCollection>
+
+class YoutubeDlg;
 
 class Mpris : public QObject {
     Q_OBJECT
@@ -35,11 +38,12 @@ public:
 public slots:
     QString getPlaybackStatus() const;
 
+    Q_INVOKABLE void playYoutubeURL() const;
     Q_INVOKABLE void playpause() const;
     Q_INVOKABLE void stop() const;
 
 private slots:
-    void onPropertiesChanged(const QString &p);
+    void onPropertiesChanged(const QString &p);;
 
 signals:
     void playbackStatusChanged(const QString &newStatus);
@@ -57,6 +61,7 @@ private:
     static const QString path;
     static const QString iface_properties;
     static const QString iface_player;
+    static const QString iface_mpris2;
 
     KActionCollection *m_collection { nullptr };
 

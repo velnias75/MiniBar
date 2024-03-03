@@ -17,7 +17,11 @@
 *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
+#include <QRegularExpression>
+#include <QMessageBox>
+#include <QInputDialog>
 #include <QDBusMessage>
+#include <QUrl>
 
 #include <KLocalizedString>
 #include <KGlobalAccel>
@@ -27,6 +31,7 @@
 const QString Mpris::service = "org.mpris.MediaPlayer2.vlc";
 const QString Mpris::path = "/org/mpris/MediaPlayer2";
 const QString Mpris::iface_properties = "org.freedesktop.DBus.Properties";
+const QString Mpris::iface_mpris2 = "org.mpris.MediaPlayer2";
 const QString Mpris::iface_player = "org.mpris.MediaPlayer2.Player";
 
 Mpris::Mpris(QObject *parent) : QObject(parent), con(QDBusConnection::sessionBus()) {
@@ -98,4 +103,70 @@ QDBusReply<QVariant> Mpris::call(const QString& iface, const QString& method, co
 
 void Mpris::onPropertiesChanged(const QString& s) {
     emit playbackStatusChanged(s);
+}
+
+void Mpris::playYoutubeURL() const {
+
+    QInputDialog dlg;
+
+    dlg.setInputMode( QInputDialog::TextInput);
+    dlg.setWindowTitle(i18n("Play Youtube URL"));
+    dlg.setLabelText(i18n("URL:"));
+    dlg.resize(QSize(400, dlg.size().height()));
+
+    const bool ok = dlg.exec();
+    QString text = dlg.textValue();
+
+    if (ok && !text.isEmpty()) {
+
+        const QUrl url(text.replace(QRegularExpression("\\&list=[^\\&]*|\\&index[^\\&]*"), ""));
+
+        if(url.isValid() && (!url.scheme().isEmpty() && url.scheme().startsWith("http", Qt::CaseInsensitive))) {
+
+            QStringList args;
+            args << "-f 22" << "-g" << url.toEncoded();
+
+            QProcess p;
+
+            p.start("yt-dlp", args, QIODeviceBase::ReadOnly);
+
+            if(p.exitCode() == 0) {
+
+                if(p.waitForReadyRead()) {
+
+                    QList<QVariant> videoUrl;
+                    videoUrl << QString(p.readAllStandardOutput()).remove('\n');
+
+                    if(p.waitForFinished()) {
+                        call(iface_mpris2, "Raise");
+                        call(iface_player, "OpenUri", videoUrl);
+                    }
+
+                } else {
+
+                    QMessageBox msg;
+                    QString error(p.readAllStandardError());
+
+                    msg.setIcon(QMessageBox::Critical);
+                    msg.setText(i18n("yt-dlp failed with an error"));
+                    msg.setDetailedText(error);
+                    msg.setStandardButtons(QMessageBox::Ok);
+                    msg.setStyleSheet("QLabel{min-width: 7#500px;}");
+
+                    msg.exec();
+                }
+            }
+
+        } else {
+
+            QMessageBox msg;
+
+            msg.setIcon(QMessageBox::Critical);
+            msg.setText(i18n("Invalid URL"));
+            msg.setInformativeText(url.toDisplayString());
+            msg.setStandardButtons(QMessageBox::Ok);
+
+            msg.exec();
+        }
+    }
 }

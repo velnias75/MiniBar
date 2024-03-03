@@ -9,6 +9,7 @@ set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH} ${ECM_KDE_MODULE_DIR} ${CMAKE_MODULE_PA
 include(KDEInstallDirs)
 include(KDECMakeSettings)
 include(KDECompilerSettings NO_POLICY_SCOPE)
+include(ECMInstallIcons)
 include(FeatureSummary)
 
 find_package(Plasma ${KF5_MIN_VERSION} REQUIRED COMPONENTS)
@@ -25,6 +26,7 @@ find_package(Qt6 REQUIRED COMPONENTS
 )
 
 plasma_install_package(plasmoid de.rangun.minibar)
+ecm_install_icons(ICONS "128-apps-youtube.svg" DESTINATION ${KDE_INSTALL_ICONDIR})
 
 add_subdirectory(src)
 

@@ -49,6 +49,15 @@ PlasmoidItem {
         anchors.fill: parent
 
         PlasmaComponents.ToolButton {
+            icon.name: "youtube"
+            Layout.fillWidth: true
+
+             onClicked: {
+                mpris.playYoutubeURL();
+            }
+        }
+
+        PlasmaComponents.ToolButton {
             icon.name: (mpris.playbackStatus == "Playing" ? "media-playback-pause" : "media-playback-start")
             Layout.fillWidth: true
 

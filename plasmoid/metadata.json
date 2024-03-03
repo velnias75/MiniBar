@@ -7,11 +7,17 @@
             }
         ],
         "Category": "Multimedia",
-        "Description": "A widget to take over the world!",
+        "Description": "Minmal Multimedia Control for VLC",
+        "Description[de]": "Minimale Multimediakontrolle für den VLC",
+        "Website": "https://github.com/velnias75/MiniBar",
+        "License": "GPL-3.0-or-later",
         "Icon": "media-playback-start",
         "Id": "de.rangun.minibar",
         "Name": "MiniBar",
-        "Version": "1"
+        "Version": "0.1",
+        "ServiceTypes": [
+            "Plasma/Applet"
+        ]
     },
     "KPackageStructure": "Plasma/Applet",
     "X-Plasma-API-Minimum-Version": "6.0",
