@@ -34,16 +34,20 @@ class Mpris : public QObject {
 
 public:
     explicit Mpris(QObject *parent = 0);
+    virtual ~Mpris();
 
 public slots:
     QString getPlaybackStatus() const;
+
+    Q_INVOKABLE void launchVLC() const;
 
     Q_INVOKABLE void playYoutubeURL() const;
     Q_INVOKABLE void playpause() const;
     Q_INVOKABLE void stop() const;
 
 private slots:
-    void onPropertiesChanged(const QString &p);;
+    void onPropertiesChanged(const QString &p);
+    void vlcStarted() const;
 
 signals:
     void playbackStatusChanged(const QString &newStatus);
@@ -67,6 +71,8 @@ private:
 
     QAction *m_playpause;
     QAction *m_stop;
+
+    QProcess *vlc { nullptr };
 };
 
 #endif // MPRIS_H_INCLUDED

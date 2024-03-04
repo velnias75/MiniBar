@@ -34,7 +34,7 @@ const QString Mpris::iface_properties = "org.freedesktop.DBus.Properties";
 const QString Mpris::iface_mpris2 = "org.mpris.MediaPlayer2";
 const QString Mpris::iface_player = "org.mpris.MediaPlayer2.Player";
 
-Mpris::Mpris(QObject *parent) : QObject(parent), con(QDBusConnection::sessionBus()) {
+Mpris::Mpris(QObject *parent) : QObject(parent), con(QDBusConnection::sessionBus()), vlc(new QProcess()) {
 
     if(!con.connect(service, path, iface_properties, "PropertiesChanged", this, SLOT(playbackStatusChanged(const QString&)))) {
         qWarning() << "Couldn't connect to " << iface_properties << ".PropertiesChanged";
@@ -52,6 +52,15 @@ Mpris::Mpris(QObject *parent) : QObject(parent), con(QDBusConnection::sessionBus
     m_stop->setIcon(QIcon::fromTheme(QStringLiteral("media-playback-stop")));
     m_stop->setText(i18n("Stop"));
     KGlobalAccel::setGlobalShortcut(m_stop, Qt::Key_MediaStop);
+
+    vlc->setProgram("vlc");
+    vlc->setArguments({"--started-from-file"});
+
+    connect(vlc, SIGNAL(started), this, SLOT(vlcStarted()));
+}
+
+Mpris::~Mpris() {
+    delete vlc;
 }
 
 QString Mpris::getPlaybackStatus() const {
@@ -69,6 +78,15 @@ QString Mpris::getPlaybackStatus() const {
         qWarning() << "Error getting MPRIS Identity:" << reply.error().message();
         return "VLC not running";
     }
+}
+
+void Mpris::launchVLC() const {
+    qDebug() << "Launching VLC ...";
+    vlc->start();
+}
+
+void Mpris::vlcStarted() const {
+    qDebug() << "VLC launched ...";
 }
 
 void Mpris::playpause() const {

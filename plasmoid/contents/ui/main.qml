@@ -23,6 +23,7 @@ import org.kde.plasma.plasmoid
 import org.kde.plasma.core as PlasmaCore
 import org.kde.plasma.components as PlasmaComponents
 
+
 import de.rangun.minibar 1.0
 
 PlasmoidItem {
@@ -62,6 +63,11 @@ PlasmoidItem {
             Layout.fillWidth: true
 
             onClicked: {
+
+                if(mpris.playbackStatus == "VLC not running") {
+                    mpris.launchVLC();
+                }
+
                 mpris.playpause();
             }
         }
